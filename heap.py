@@ -16,9 +16,9 @@ class Heap:
     '''
     build heap
     :param nodelist - unordered list of nodes
-    :type list
+    :type array
     :return heap nodelist ordered
-    :type list
+    :type array
     '''
     def build(self, tree):
         for elem_idx in xrange(1, len(tree)):
@@ -26,15 +26,25 @@ class Heap:
         return tree
 
     def check(self, tree, elem_idx):
-        if elem_idx == 0:
-            return
+        #if elem_idx == 0:
+        #    return
         #check parent
         if tree[elem_idx] < tree[(elem_idx-1)/2]:
             self.swap(tree, elem_idx, (elem_idx-1)/2)
             self.check(tree, (elem_idx-1)/2)
 
+        #check childs
+        elif self.get_childs(tree, elem_idx) != []:
+            childs = self.get_childs(tree, elem_idx)
+            min_idx_so_far = elem_idx
+            for i in childs:
+                if tree[i] < tree[min_idx_so_far]:
+                    min_idx_so_far = i
+            if elem_idx != min_idx_so_far:
+                self.swap(tree, elem_idx, min_idx_so_far)
+                self.check(tree, min_idx_so_far)
 
-
+        '''
         #check left child
         if len(tree) > 2*elem_idx + 1:
             if tree[elem_idx] > tree[2*elem_idx+1]:
@@ -44,14 +54,17 @@ class Heap:
         if len(tree) > 2*elem_idx + 2:
             if tree[elem_idx] > tree[2*elem_idx+2]:
                 self.swap(tree, elem_idx, 2*elem_idx+2)
-        else:
-            return
+        '''
+        return
 
     '''
     swap elements in array at index a and b with each other
-    :param array
-    :a
-    :b
+    :param tree
+    :type array
+    :param elem_idx1
+    :type int
+    :param elem_idx2
+    :type int
     '''
     def swap(self, tree, elem_idx1, elem2_idx):
         _tmp = tree[elem_idx1]
@@ -88,6 +101,7 @@ class Heap:
     def remove_elem_at_idx(self, tree, elem_idx):
         tree.pop(elem_idx)
         tree.insert(elem_idx, tree.pop())
+        self.check(tree, elem_idx)
         #self.build(tree)
 
     '''
@@ -227,19 +241,28 @@ class Node:
 
 if __name__ == '__main__':
     tree = [5, 12, 6, 9, 7, 2, 14, 8, 13, 1, 5, 16, 3, 10, 11, 4, 15]
+    print "Input: " + str(tree)
     tree.reverse()
+    print "Reverse: " + str(tree)
     h = Heap()
 
     nodelist = []
     for elem in tree:
         nodelist.append(Node(elem))
 
-    print h.build(tree)
+    print "Heap structure" + str(h.build(tree))
+    h.insert_elem(tree, 27)
+    h.insert_elem(tree, 3)
     h.insert_elem(tree, 18)
     h.insert_elem(tree, 1)
     h.insert_elem(tree, 19)
-    print tree
-    #h.remove_root(tree)
+    print "Inserted {27, 3, 18, 1, 19}: " + str(tree)
+    h.remove_root(tree)
+    print "Root removed: " + str(tree)
+    h.remove_elem_at_idx(tree, 0)
+    print "Tree[0]=root removed: " + str(tree)
+    '''
+
     #h.remove_elem_at_idx(tree, 0)
     #print tree
     h.remove_elem_at_idx(tree, 2)
@@ -257,3 +280,5 @@ if __name__ == '__main__':
     #     if i == 0:
     #         continue
     #     print arr[i], arr[(i-1)/2]
+    '''
+
