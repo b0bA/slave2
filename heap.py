@@ -21,68 +21,68 @@ class Heap:
     :type array
     '''
     def build(self, tree):
-        for elem_idx in xrange(1, len(tree)):
-            self.check(tree, elem_idx)
+        for node_idx in xrange(1, len(tree)):
+            self.check(tree, node_idx)
         return tree
 
-    def check(self, tree, elem_idx):
+    def check(self, tree, node_idx):
         #check parent
-        if (elem_idx - 1) / 2 >= 0:
-            if tree[elem_idx] < tree[(elem_idx-1)/2]:
-                self.swap(tree, elem_idx, (elem_idx-1)/2)
-                self.check(tree, (elem_idx-1)/2)
+        if (node_idx - 1) / 2 >= 0:
+            if tree[node_idx] < tree[(node_idx-1)/2]:
+                self.swap(tree, node_idx, (node_idx-1)/2)
+                self.check(tree, (node_idx-1)/2)
 
         #check childs
-        if self.get_childs(tree, elem_idx) != []:
-            childs = self.get_childs(tree, elem_idx)
-            min_idx_so_far = elem_idx
+        childs = self.get_childs(tree, node_idx)
+        if childs != []:
+            min_idx_so_far = node_idx
             for i in childs:
                 if tree[i] < tree[min_idx_so_far]:
                     min_idx_so_far = i
-            if elem_idx != min_idx_so_far:
-                self.swap(tree, elem_idx, min_idx_so_far)
+            if node_idx != min_idx_so_far:
+                self.swap(tree, node_idx, min_idx_so_far)
                 self.check(tree, min_idx_so_far)
 
-        if elem_idx < 0:
+        if node_idx < 0:
             return
         '''
         #check left child
-        if len(tree) > 2*elem_idx + 1:
-            if tree[elem_idx] > tree[2*elem_idx+1]:
-                self.swap(tree, elem_idx, 2*elem_idx+1)
+        if len(tree) > 2*node_idx + 1:
+            if tree[node_idx] > tree[2*node_idx+1]:
+                self.swap(tree, node_idx, 2*node_idx+1)
 
         # check right child
-        if len(tree) > 2*elem_idx + 2:
-            if tree[elem_idx] > tree[2*elem_idx+2]:
-                self.swap(tree, elem_idx, 2*elem_idx+2)
+        if len(tree) > 2*node_idx + 2:
+            if tree[node_idx] > tree[2*node_idx+2]:
+                self.swap(tree, node_idx, 2*node_idx+2)
         '''
         return
 
     '''
-    swap elements in array at index a and b with each other
+    swap nodes in array at index a and b with each other
     :param tree
     :type array
-    :param elem_idx1
+    :param node_idx1
     :type int
-    :param elem_idx2
+    :param node_idx2
     :type int
     '''
-    def swap(self, tree, elem_idx1, elem2_idx):
-        _tmp = tree[elem_idx1]
-        tree[elem_idx1] = tree[elem2_idx]
-        tree[elem2_idx] = _tmp
+    def swap(self, tree, node_idx1, node2_idx):
+        _tmp = tree[node_idx1]
+        tree[node_idx1] = tree[node2_idx]
+        tree[node2_idx] = _tmp
 
     '''
-    return the minimum of the binary tree stored by design as root element
+    return the minimum of the binary tree stored by design as root node
     '''
     def get_root(self, tree):
         return tree[0]
 
     '''
-    insert a new element into the tree
+    insert a new node into the tree
     '''
-    def insert_elem(self, tree, elem):
-        tree.append(elem)
+    def insert_node(self, tree, node):
+        tree.append(node)
         self.check(tree, len(tree)-1)
 
     def insert_subtree(self, tree, subtree):
@@ -97,40 +97,41 @@ class Heap:
         self.build(tree)
 
     '''
-    remove element at index elem_idx and rebuild the tree
+    remove node at index node_idx and rebuild the tree
     '''
-    def remove_elem_at_idx(self, tree, elem_idx):
-        tree.pop(elem_idx)
-        tree.insert(elem_idx, tree.pop())
-        self.check(tree, elem_idx)
+    def remove_node_at_idx(self, tree, node_idx):
+        tree.pop(node_idx)
+        tree.insert(node_idx, tree.pop())
+        self.check(tree, node_idx)
         #self.build(tree)
 
     '''
-    removes first occurence of the given element in tree top-down from root to leafs
+    removes first occurence of the given node in tree top-down from root to leafs
     and rebuilds the tree afterwards
     '''
-    def remove_first_elem(self, tree, elem):
+    def remove_first_node(self, tree, node):
         for i in xrange(0, len(tree)):
-            if tree[i] == elem:
+            if tree[i] == node:
                 tree.pop(i)
                 self.build(tree)
                 return
 
 
     '''
-    removes all elements of list elems from the tree and rebuilds the tree afterwards
+    removes all nodes of list nodes from the tree and rebuilds the tree afterwards
     '''
-    def remove_all_elements(self, tree, elements):
+    def remove_all_nodes(self, tree, nodes):
         for i in xrange(len(tree)-1, -1, -1):
             #print i, tree[i]
-            if tree[i] in elements:
+            if tree[i] in nodes:
                 tree.pop(i)
         self.build(tree)
 
-    '''
-    remove subtree from tree at the given subroot index. rebuilt tree afterwards
-    '''
     def remove_subtree(self, tree, subroot_idx):
+        """
+        remove subtree from tree at the given subroot index. rebuilt tree afterwards
+        ..todo:: implement
+        """
         if subroot_idx < len(tree):
             tree.pop(subroot_idx)
             self.remove_subtree(tree, 2 * subroot_idx + 1)
@@ -139,10 +140,11 @@ class Heap:
             self.build(tree)
             return
 
-    '''
-    returns the subtree of tree at the given subroot
-    '''
     def get_subtree(self, tree, subroot_idx, subtree):
+        """
+        returns the subtree of tree at the given subroot
+        ..todo:: implement
+        """
         if subroot_idx < len(tree):
             subtree.append(tree[subroot_idx])
             self.get_subtree(tree, subroot_idx * 2 + 1, subtree)
@@ -153,86 +155,106 @@ class Heap:
             return subtree
         return subtree
 
-    '''
-    get a list of child_idx
-    :param tree
-    :type array
-    :param elem_idx
-    :type int
-    :return array of childs ([] -> no childs, [x] -> only left child index, [x,y] -> index of both childs)
-    :rtype array
-    '''
-    def get_childs(self, tree, elem_idx):
+    def get_childs(self, tree, node_idx):
+        """
+        get a list of child_idx
+        :param tree: list containing the treestructure
+        :param node_idx: index of the node trying to find the childs of
+        :type tree: array
+        :type node_idx: int
+        :return: - array of the childs_indizes [left_child_idx, right_child_idx]
+                 - empty array [], if no child was found (node at node_idx is leaf)
+        :rtype: array
+
+        ..note:: if a node has child(s) it will always have a left child
+        """
         childs = []
-        if len(tree) > 2 * elem_idx + 1:
-            childs.append(2*elem_idx + 1)   #append left child
-        if len(tree) > 2 * elem_idx + 2:
-            childs.append(2 * elem_idx + 2) #append right child
+        if len(tree) > 2 * node_idx + 1:
+            childs.append(2*node_idx + 1)   #append left child
+        if len(tree) > 2 * node_idx + 2:
+            childs.append(2 * node_idx + 2) #append right child
         return childs
 
-    '''
-    get the parent of a element
-    :param tree
-    :type array
-    :param elem_idx
-    :type int
-    :return parent
-    :rtype int
-    '''
-    def get_parent(self, tree, elem_idx):
-        if elem_idx == 0:
+    def get_parent(self, tree, node_idx):
+        """
+        get the parent of a node
+        :param tree: list containing the treestructure
+        :param node_idx: index of the node trying to find the parent of
+        :type tree: array
+        :type node_idx: int
+        :return: - index of the parent, if parent is found
+                 - None, otherwise (in a valid treestructure only root has no parent)
+        :rtype: int
+        """
+        if node_idx == 0:
             return None #The root has no parent
-        if len(tree) > elem_idx:
-            return (elem_idx-1) / 2
+        if len(tree) > node_idx:
+            return (node_idx-1) / 2
 
-    '''
-    get the sibling of an element
-    :param tree
-    :type array
-    :param elem_idx
-    :type int
-    :return sibling
-    :rtype int
-    '''
-    def get_sibling(self, tree, elem_idx):
-        if elem_idx % 2 == 0:
-            return elem_idx - 1 #return left sibling (always exists, if there is a right sibling)
-        elif len(tree) > elem_idx + 1:
-            return elem_idx + 1 #return right sibling if one exists
+    def get_sibling(self, tree, node_idx):
+        """
+        get the sibling of a node
+        :param tree: list containing the treestructure
+        :param node_idx: index of the node trying to find the sibling of
+        :type tree: array
+        :type node_idx: int
+        :return: - index of the sibling, if sibling is found
+                 - None, otherwise
+        :rtype: int
+        """
+        if node_idx % 2 == 0:
+            return node_idx - 1 #return left sibling (always exists, if there is a right sibling)
+        elif len(tree) > node_idx + 1:
+            return node_idx + 1 #return right sibling if one exists
         else:
-            return None #return None if elem is odd and the last in tree
+            return None #return None if node is odd and the last in tree
 
-    '''
-    get a list of indizes from the given element to the root
-    :param tree
-    :type array
-    :param elem_idx
-    :type int
-    :return array of indizes
-    :rtype array
-    '''
-    def get_rootpath(self, tree, elem_idx):
+    def get_rootpath(self, tree, node_idx):
+        """
+        get a list of indizes from the given node to the root
+        :param tree: list containing the treestructure
+        :param node_idx: index of the node starting bottom-up till root
+        :type tree: array
+        :type node_idx: int
+        :return: list of indizes of nodes on the path from node_idx to root
+                (node_idx is the first node of this list and the root is the last node of this list
+        :rtype: array
+        """
         path=[]
-        path.append(elem_idx)
-        while self.get_parent(tree, elem_idx) != None:
-            elem_idx = self.get_parent(tree, elem_idx)
-            path.append(elem_idx)
+        path.append(node_idx)
+        while self.get_parent(tree, node_idx) != None:
+            node_idx = self.get_parent(tree, node_idx)
+            path.append(node_idx)
         return path
+
+    def is_leaf(self, tree, node_idx):
+        """
+        return if the node at the given index is a leaf or not 
+        :param tree: list containing the treestructure
+        :param node_idx: index of the node to check
+        :type tree: array
+        :type node_idx: int
+        :return: true if node is leaf, otherwise false
+        :rtype: bool
+        """
+        if node_idx >= (len(tree)-1)/2:
+            return True
+        return False
 
 
 class Node:
-    '''
+    """
     :param value - value of node e.g. 50 for type int
     :type object
     :param idx - index of node in tree structure
     :type int
-    :param parent_idx - index of the parent node (-1 if node is root element)
+    :param parent_idx - index of the parent node (-1 if node is root node)
     :type int
     :param childs_idx - index of child nodes (empty [] if the node is a leaf)
     :type array
     :param type - type of the node (values are: 0 -> root; 1 -> inner node; 2 -> leaf)
     :type int
-    '''
+    """
     def __init__(self, value=None, idx=None, parent_idx=None, childs_idx=None, type=None):
         self.value = value
         self.idx = idx
@@ -248,31 +270,31 @@ if __name__ == '__main__':
     h = Heap()
 
     nodelist = []
-    for elem in tree:
-        nodelist.append(Node(elem))
+    for node in tree:
+        nodelist.append(Node(node))
 
     print "Heap structure: " + str(h.build(tree))
-    h.insert_elem(tree, 27)
-    h.insert_elem(tree, 3)
-    h.insert_elem(tree, 18)
-    h.insert_elem(tree, 1)
-    h.insert_elem(tree, 19)
+    h.insert_node(tree, 27)
+    h.insert_node(tree, 3)
+    h.insert_node(tree, 18)
+    h.insert_node(tree, 1)
+    h.insert_node(tree, 19)
     print "Inserted {27, 3, 18, 1, 19}: " + str(tree)
     h.remove_root(tree)
     print "Root removed: " + str(tree)
-    h.remove_elem_at_idx(tree, 0)
+    h.remove_node_at_idx(tree, 0)
     print "Tree[0]=root removed: " + str(tree)
-    '''
 
-    #h.remove_elem_at_idx(tree, 0)
+    '''
+    #h.remove_node_at_idx(tree, 0)
     #print tree
-    h.remove_elem_at_idx(tree, 2)
+    h.remove_node_at_idx(tree, 2)
     print tree
-    #h.remove_first_elem(tree, 1)
+    #h.remove_first_node(tree, 1)
     #print tree
-    h.insert_elem(tree, 1)
+    h.insert_node(tree, 1)
     print tree
-    h.remove_all_elements(tree, [1, 5])
+    h.remove_all_nodes(tree, [1, 5])
     print tree
     #print h.get_subtree(tree, 2)
     #h.remove_subtree(tree, 2)
