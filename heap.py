@@ -26,15 +26,14 @@ class Heap:
         return tree
 
     def check(self, tree, elem_idx):
-        #if elem_idx == 0:
-        #    return
         #check parent
-        if tree[elem_idx] < tree[(elem_idx-1)/2]:
-            self.swap(tree, elem_idx, (elem_idx-1)/2)
-            self.check(tree, (elem_idx-1)/2)
+        if (elem_idx - 1) / 2 >= 0:
+            if tree[elem_idx] < tree[(elem_idx-1)/2]:
+                self.swap(tree, elem_idx, (elem_idx-1)/2)
+                self.check(tree, (elem_idx-1)/2)
 
         #check childs
-        elif self.get_childs(tree, elem_idx) != []:
+        if self.get_childs(tree, elem_idx) != []:
             childs = self.get_childs(tree, elem_idx)
             min_idx_so_far = elem_idx
             for i in childs:
@@ -44,6 +43,8 @@ class Heap:
                 self.swap(tree, elem_idx, min_idx_so_far)
                 self.check(tree, min_idx_so_far)
 
+        if elem_idx < 0:
+            return
         '''
         #check left child
         if len(tree) > 2*elem_idx + 1:
@@ -250,7 +251,7 @@ if __name__ == '__main__':
     for elem in tree:
         nodelist.append(Node(elem))
 
-    print "Heap structure" + str(h.build(tree))
+    print "Heap structure: " + str(h.build(tree))
     h.insert_elem(tree, 27)
     h.insert_elem(tree, 3)
     h.insert_elem(tree, 18)
