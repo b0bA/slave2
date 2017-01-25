@@ -74,6 +74,8 @@ class Heap:
         :type nodes: list
         ..todo:: check if node is of type node
         """
+        if type(nodes) == int:
+            nodes = [nodes]
         for node in nodes:
             #if type(node) == Node:
             self.tree.append(node)
@@ -141,18 +143,19 @@ class Heap:
         :return subtree: list of subtree elements in heapstructure
         :param subtree: list
         """
-        subtree = []
-        h = 1
-        if 0 <= subroot_idx < len(self.tree):
-            subtree.append(self.tree[subroot_idx])
-            left_child = 2 * subroot_idx + 1
-            while len(self.tree) > left_child:
-                subtree.append(left_child)
-                right_child = self.get_sibling(left_child)
-                if right_child:
-                    subtree.append(right_child)
-                subtree = self.get_subtree(left_child, subtree)
-        return subtree
+        subtree = self.tree[subroot_idx]
+        while(subroot_idx < len(self.tree)):
+
+            if 0 <= subroot_idx < len(self.tree):
+                subtree.append(self.tree[subroot_idx])
+                left_child = 2 * subroot_idx + 1
+                while len(self.tree) > left_child:
+                    subtree.append(left_child)
+                    right_child = self.get_sibling(left_child)
+                    if right_child:
+                        subtree.append(right_child)
+                    subtree = self.get_subtree(left_child, subtree)
+            return subtree
 
     def get_childs(self, node_idx):
         """
@@ -232,6 +235,20 @@ class Heap:
             return True
         return False
 
+    def get_height(self):
+        """
+        return the height of the tree = longest path from a leaf to the root
+        a tree with just one root node has a hight of 0
+        :return: true if node is leaf, otherwise false
+        :rtype: bool
+        """
+        l = len(self.tree)
+        i = 0
+        while l > 1:
+            l >>= 1
+            i += 1
+        return i
+
 
 class Node:
     """
@@ -280,25 +297,43 @@ if __name__ == '__main__':
     h.remove_all_nodes([1, 5])
     print "Removed all nodes with value 1 or 5 : " + str(h.tree)
     print "Check, if root is leaf : " + str(h.is_leaf(0))
-    print "Check, if node at (treesize-1)/2 = " + str((len(h.tree)-1)/2) + " is leaf : " + str(h.is_leaf((len(h.tree)-1)/2))
-    print "Check, if node at treesize/2 = " + str(len(h.tree)/2) + " is leaf : " + str(h.is_leaf(len(h.tree)/2))
-    print "Check, if last node = treesize-1 = " + str(len(h.tree)-1) + " is leaf : " + str(h.is_leaf(len(h.tree)-1))
+    print "Check, if node at (treesize-1)/2 = " + str((len(h.tree)-1)/2) + " is leaf : " +\
+          str(h.is_leaf((len(h.tree)-1)/2))
+    print "Check, if node at treesize/2 = " + str(len(h.tree)/2) + " is leaf : " +\
+          str(h.is_leaf(len(h.tree)/2))
+    print "Check, if last node = treesize-1 = " + str(len(h.tree)-1) + " is leaf : " +\
+          str(h.is_leaf(len(h.tree)-1))
     p_i = h.get_rootpath(len(h.tree)-1)
-    print "Get path to root from last node = treesize-1 = " + str(len(h.tree)-1) + " : " + str(p_i)
-    print "Get sibling of the root (should be empty): " + str(h.get_sibling(0))
-    print "Get sibling of the 1st node (should be 2nd node): " + str(h.get_sibling(1))
-    print "Get sibling of the 2nd node (should be 1st node): " + str(h.get_sibling(2))
-    print "Get sibling of the last node (might be empty): " + str(h.get_sibling(len(h.tree)-1))
-    print "Get parent of root (should be empty): " + str(h.get_parent(0))
-    print "Get parent of 1st node (should be root = 0): " + str(h.get_parent(1))
-    print "Get parent of 2st node (should be root = 0): " + str(h.get_parent(2))
-    print "Get parent of the last node: " + str(h.get_parent(len(h.tree) - 1))
-    print "Get childs of the root (should return [1, 2]): " + str(h.get_childs(0))
-    print "Get childs of the parent of the last node (should return at least the last node): " + str(h.get_childs(h.get_parent(len(h.tree) - 1)))
-    print "Get childs of the last node (should return []): " + str(h.get_childs(len(h.tree) - 1))
-    print "Subtree at root (should return the whole heap): " + str(h.get_subtree(0))
-    print "Subtree at index 3: " + str(h.get_subtree(3))
-    print "Subtree at last node (should return the last node only): " + str(h.get_subtree(len(h.tree) - 1))
+    print "Get path to root from last node = treesize-1 = " +\
+          str(len(h.tree)-1) + " : " + str(p_i)
+    print "Get sibling of the root (should be empty): " +\
+          str(h.get_sibling(0))
+    print "Get sibling of the 1st node (should be 2nd node): " +\
+          str(h.get_sibling(1))
+    print "Get sibling of the 2nd node (should be 1st node): " +\
+          str(h.get_sibling(2))
+    print "Get sibling of the last node (might be empty): " +\
+          str(h.get_sibling(len(h.tree)-1))
+    print "Get parent of root (should be empty): " +\
+          str(h.get_parent(0))
+    print "Get parent of 1st node (should be root = 0): " +\
+          str(h.get_parent(1))
+    print "Get parent of 2st node (should be root = 0): " +\
+          str(h.get_parent(2))
+    print "Get parent of the last node: " +\
+          str(h.get_parent(len(h.tree) - 1))
+    print "Get childs of the root (should return [1, 2]): " +\
+          str(h.get_childs(0))
+    print "Get childs of the parent of the last node (should return at least the last node): " +\
+          str(h.get_childs(h.get_parent(len(h.tree) - 1)))
+    print "Get childs of the last node (should return []): " +\
+          str(h.get_childs(len(h.tree) - 1))
+    print "The Heap has height: " +\
+          str(h.get_height())
+
+    # print "Subtree at root (should return the whole heap): " + str(h.get_subtree(0))
+    # print "Subtree at index 3: " + str(h.get_subtree(3))
+    # print "Subtree at last node (should return the last node only): " + str(h.get_subtree(len(h.tree) - 1))
 
     '''
     #print h.get_subtree(tree, 2)
@@ -309,4 +344,3 @@ if __name__ == '__main__':
     #         continue
     #     print arr[i], arr[(i-1)/2]
     '''
-
