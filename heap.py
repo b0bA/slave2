@@ -24,7 +24,7 @@ class Heap:
     def build(self):
         for node_idx in xrange(1, len(self.tree)):
             self.check(node_idx)
-        return tree
+        #return tree
 
     def check(self, node_idx):
         #check parent
@@ -188,6 +188,8 @@ class Heap:
             return None #The root has no parent
         if len(self.tree) > node_idx:
             return (node_idx-1) / 2
+        else:
+            return None
 
     def get_sibling(self, node_idx):
         """
